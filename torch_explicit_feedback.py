@@ -5,14 +5,13 @@ from torch.utils.data import Dataset, DataLoader
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-# Step 1: Load the MovieLens dataset
+# Load the MovieLens dataset
 df = pd.read_csv("data/ml-latest-small/ratings.csv")
 print("Sample data:")
 print(df.head())
 
 # Columns: userId, movieId, rating, timestamp
 # We focus on `userId`, `movieId`, and `rating`
-
 # Map userId and movieId to consecutive integers
 user_mapping = {user: idx for idx, user in enumerate(df["userId"].unique())}
 movie_mapping = {movie: idx for idx, movie in enumerate(df["movieId"].unique())}
@@ -20,10 +19,10 @@ movie_mapping = {movie: idx for idx, movie in enumerate(df["movieId"].unique())}
 df["userId"] = df["userId"].map(user_mapping)
 df["movieId"] = df["movieId"].map(movie_mapping)
 
-# Step 2: Split the data into training and testing
+# Split the data into training and testing
 train, test = train_test_split(df, test_size=0.2, random_state=42)
 
-# Step 3: Create a PyTorch Dataset class
+# Create a PyTorch Dataset class
 class MovieLensDataset(Dataset):
     def __init__(self, data):
         self.users = torch.tensor(data["userId"].values, dtype=torch.long)
@@ -43,7 +42,7 @@ test_dataset = MovieLensDataset(test)
 train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
 test_loader = DataLoader(test_dataset, batch_size=64)
 
-# Step 4: Define the recommendation model
+# Define the recommendation model
 class ExplicitFeedbackModel(nn.Module):
     def __init__(self, num_users, num_movies, embedding_dim=32):
         super().__init__()
@@ -59,10 +58,10 @@ class ExplicitFeedbackModel(nn.Module):
         combined = torch.cat([user_embeds, movie_embeds], dim=1)  # [batch_size, embedding_dim * 2]
         x = torch.relu(self.fc1(combined))  # Hidden layer 1
         x = torch.relu(self.fc2(x))  # Hidden layer 2
-        return self.fc3(x).squeeze()  # Output predicted rating
+        return self.fc3(x).squeeze()  # Output predicted rating. squeeze() removes the last dimension
 
 
-# Step 5: Train the model
+# Train the model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 num_users = len(user_mapping)
 num_movies = len(movie_mapping)
@@ -92,7 +91,7 @@ for epoch in range(num_epochs):
 
     print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {total_loss:.4f}")
 
-# Step 6: Evaluate the model
+# Evaluate the model
 model.eval()
 total_loss = 0
 with torch.no_grad():
@@ -104,7 +103,7 @@ with torch.no_grad():
 
 print(f"Test Loss (MSE): {total_loss / len(test_loader):.4f}")
 
-# Step 7: Generate predictions for a sample user
+# Generate predictions for a sample user
 sample_user_id = 0  # Example user
 all_movies = torch.arange(num_movies).to(device)
 sample_user = torch.tensor([sample_user_id] * num_movies).to(device)

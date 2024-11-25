@@ -18,10 +18,10 @@ df["movieId"] = df["movieId"].map(item_mapping)
 df["interaction"] = (df["rating"] > 0).astype(float)  # Binary implicit feedback
 
 
-# Step 2: Split the data into training and testing
+# Split the data into training and testing
 train, test = train_test_split(df, test_size=0.2, random_state=42)
 
-# Step 3: Create a PyTorch Dataset class
+# Create a PyTorch Dataset class
 class ImplicitFeedbackDataset(Dataset):
     def __init__(self, data):
         self.users = torch.tensor(data["userId"].values, dtype=torch.long) # Convert to tensor
@@ -41,7 +41,7 @@ test_dataset = ImplicitFeedbackDataset(test) # Create dataset
 train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True) # Create DataLoader
 test_loader = DataLoader(test_dataset, batch_size=32) # Create DataLoader
 
-# Step 4: Define the recommendation model
+# Define the recommendation model
 class ImplicitFeedbackModel(nn.Module):
     def __init__(self, num_users, num_items, embedding_dim=32):
         super().__init__()
@@ -56,7 +56,7 @@ class ImplicitFeedbackModel(nn.Module):
         return torch.sigmoid(self.output_layer(combined))  # Predict interaction probability
 
 
-# Step 5: Train the model
+# Train the model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu") # Check if GPU is available
 num_users = len(user_mapping) # Number of users
 num_items = len(item_mapping) # Number of items
@@ -86,7 +86,7 @@ for epoch in range(num_epochs):
 
     print(f"Epoch {epoch + 1}/{num_epochs}, Loss: {total_loss:.4f}")
 
-# Step 6: Evaluate the model
+# Evaluate the model
 model.eval()
 hits, total = 0, 0
 with torch.no_grad():
@@ -100,7 +100,7 @@ with torch.no_grad():
 accuracy = hits / total
 print(f"Test Accuracy: {accuracy:.4f}")
 
-# Step 7: Generate recommendations for a sample user
+# Generate recommendations for a sample user
 sample_user_id = 0  # Example user
 all_items = torch.arange(num_items).to(device)
 sample_user = torch.tensor([sample_user_id] * num_items).to(device)
