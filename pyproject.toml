@@ -1,0 +1,29 @@
+[build-system]
+requires = [
+    "hatchling",
+    "scikit-learn",
+    "numpy",
+    "torch",
+    "pandas",
+    "lightfm"
+    ]
+build-backend = "hatchling.build"
+
+[project]
+name = "RecommendationSystems"
+version = "0.0.1"
+authors = [
+  { name="Henry Musto", email="musto101@gmail.com" },
+]
+description = "A package containing a collection of recommendations models"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/musto101/RecommendationSystems"
+Issues = "https://github.com/musto101/RecommendationSystems/issues"
